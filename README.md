@@ -1,6 +1,16 @@
 # VoCuc_CustomerChatGateway
 Tích hợp nền tảng ChatWoot để technical support và khách hàng giao tiếp thông qua 1 cổng chung và lưu trữ dữ liệu chat nhằm phân tích FAQ, phân tích tâm lý khách hàng
 
+# Tích hợp Zalo
+Docs: https://docs.google.com/document/d/1La36SZsbFur-FpjkH18uYDTjAvk-dMrnyiIBRC4_wis/edit?fbclid=IwY2xjawRXDEBleHRuA2FlbQIxMABicmlkETEwaUQ2OGJYbGlUYlFjbGZPc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHt3hyNg8v_DE2yFNEKJ3CPxEZseCKezgO-vq4yG9t4aIXDLT5sg_tjDejf6o_aem_3qE52jmWqzxjLfvMEf74XA&tab=t.0
+
+Source code: https://drive.google.com/drive/folders/10JbTMNlCwTV_hIxBPeLwAfRJFEwW6_N-?fbclid=IwY2xjawRXDE9leHRuA2FlbQIxMABicmlkETEwaUQ2OGJYbGlUYlFjbGZPc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHg4KpdSAlZZd_43eGYwYHR0CpJpj_tM37niQc6ILCc3OX0YKb6gM01gdoYdH_aem_7QDDe5OSsVoTxye90BhDEw
+
+    Tác giả Docs và Source code: Trần Giáp Minh - Bài viết nhóm facebook: "Cộng đồng n8n AI Automation Việt Nam"
+
+
+# Tham khảo Antigravity giải thích kiến trúc: 
+
 # Chatwoot Dataflow and Architecture
 
 Chatwoot is built on a modern Ruby on Rails and Vue.js stack, utilizing a set of robust services for data persistence, background processing, and real-time communication.
