@@ -1,5 +1,7 @@
 # VoCuc_CustomerChatGateway
-Tích hợp nền tảng ChatWoot để technical support và khách hàng giao tiếp thông qua 1 cổng chung và lưu trữ dữ liệu chat nhằm phân tích FAQ, phân tích tâm lý khách hàng
+Vấn đề: Technical support nhận yêu cầu chăm sóc khách hàng từ sale, Sau đó tech liên hệ khách hàng (có thể ở trong nhóm chung hoặc tin nhắn cá nhân). Hỗ trợ xong báo lại thông tin rời rạc, thiếu chiều sâu, không biết được câu hỏi chi tiết là gì => Khó khăn trong việc tổng hợp dữ liệu CSKH để có chiến lược giải quyết FAQ hiệu quả.
+
+Giải pháp: Tích hợp nền tảng ChatWoot để technical support và khách hàng giao tiếp thông qua 1 cổng chung và lưu trữ dữ liệu chat nhằm phân tích FAQ, phân tích tâm lý khách hàng, phân loại khách hàng phù hợp với tech.
 
 # Tích hợp Zalo
 Docs: https://docs.google.com/document/d/1La36SZsbFur-FpjkH18uYDTjAvk-dMrnyiIBRC4_wis/edit?fbclid=IwY2xjawRXDEBleHRuA2FlbQIxMABicmlkETEwaUQ2OGJYbGlUYlFjbGZPc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHt3hyNg8v_DE2yFNEKJ3CPxEZseCKezgO-vq4yG9t4aIXDLT5sg_tjDejf6o_aem_3qE52jmWqzxjLfvMEf74XA&tab=t.0
