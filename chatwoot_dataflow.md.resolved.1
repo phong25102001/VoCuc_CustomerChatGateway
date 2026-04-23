@@ -1,0 +1,156 @@
+# Chatwoot Dataflow and Architecture
+
+Chatwoot is built on a modern Ruby on Rails and Vue.js stack, utilizing a set of robust services for data persistence, background processing, and real-time communication.
+
+## High-Level Dataflow Diagram
+
+The following diagram illustrates how data flows between the user, the Chatwoot core, and external services.
+
+```mermaid
+graph TD
+    %% External Actors
+    User((Agent/Admin))
+    Customer((Customer))
+    Channels[External Channels<br/>(WhatsApp, FB, Email, etc.)]
+
+    %% Frontend
+    subgraph "Client Layer"
+        VueApp[Vue.js Frontend Dashboard]
+        Widget[Chat Widget]
+    end
+
+    %% Backend Core
+    subgraph "Application Layer (Ruby on Rails)"
+        API[Rails API / Web Server]
+        Cable[ActionCable WebSockets]
+        Sidekiq[Sidekiq Workers]
+    end
+
+    %% Data Persistence & Messaging
+    subgraph "Infrastructure Layer"
+        Postgres[(PostgreSQL DB)]
+        Redis[(Redis Cache/Queue/PubSub)]
+        S3[Object Storage<br/>(S3/GCS/Azure)]
+    end
+
+    %% Flow: Incoming Message
+    Customer -->|Message| Channels
+    Channels -->|Webhook Request| API
+    API -->|Persist Data| Postgres
+    API -->|Queue Job| Redis
+    Redis -->|Process| Sidekiq
+    Sidekiq -->|Update| Postgres
+    Sidekiq -->|Publish Event| Redis
+    Redis -->|Notify| Cable
+    Cable -->|Real-time Update| VueApp
+
+    %% Flow: Outgoing Message
+    User -->|Send Message| VueApp
+    VueApp -->|POST API Request| API
+    API -->|Persist| Postgres
+    API -->|Queue External Send| Redis
+    Redis -->|Process| Sidekiq
+    Sidekiq -->|API Call| Channels
+    Channels -->|Deliver| Customer
+
+    %% Flow: Attachments
+    VueApp -->|Upload| API
+    API -->|Store File| S3
+    S3 -->|Reference URL| Postgres
+```
+
+## Detailed Component Roles
+
+### 1. Web Server (Ruby on Rails)
+- Acts as the central hub for all HTTP requests.
+- Handles authentication, authorization (CanCanCan), and business logic.
+- Exposes RESTful APIs for the Vue.js dashboard.
+- Manages incoming webhooks from external channels.
+
+### 2. PostgreSQL
+- The primary source of truth for all persistent data.
+- Stores: Users, Accounts, Conversations, Messages, Contacts, and Inbox configurations.
+
+### 3. Redis
+- **Background Jobs:** Serves as the message broker for Sidekiq.
+- **Real-time:** Facilitates the Pub/Sub mechanism for ActionCable (WebSockets).
+- **Caching:** Stores session data and temporary application state to improve performance.
+
+### 4. Sidekiq Workers
+- Offloads time-consuming tasks from the main request/response cycle.
+- Examples: 
+  - Sending automated emails.
+  - Processing incoming webhooks from social media platforms.
+  - Executing automation rules.
+  - Triggering outbound webhooks to third-party systems.
+
+### 5. ActionCable (WebSockets)
+- Provides full-duplex communication between the backend and frontend.
+- Ensures agents see incoming messages and conversation status changes in real-time without refreshing the page.
+
+### 6. Object Storage (S3 / Cloud Storage)
+- Stores non-relational assets like:
+  - Message attachments (images, documents).
+  - User avatars.
+  - Account logos.
+
+### 7. External Integrations (Channels)
+- Chatwoot connects to various platforms via their official APIs/Webhooks:
+  - **Meta:** WhatsApp, Messenger, Instagram.
+  - **Email:** IMAP/SMTP or SendGrid/Mailgun.
+  - **Others:** SMS (Twilio), Telegram, Line, and the custom Chatwoot Web Widget.
+
+## Chatwoot as a Communication Gateway
+
+When viewed as a gateway, Chatwoot acts as the central bridge between diverse customer entry points and the specialized technical support environment.
+
+```mermaid
+graph LR
+    subgraph "Customer Side (Omnichannel)"
+        C1[Email]
+        C2[WhatsApp]
+        C3[Web Widget]
+        C4[Social Media]
+    end
+
+    subgraph "Chatwoot Gateway (Orchestrator)"
+        Inbox[Unified Inbox]
+        Rules[Automation Rules / Chatbots]
+        Router[Assignment Logic]
+    end
+
+    subgraph "Technical Supporter Side"
+        Agent[Agent Dashboard]
+        Collab[Private Notes / Mentions]
+        Integrations[Tech Stack: Jira/GitHub/Webhooks]
+    end
+
+    %% Routing
+    C1 & C2 & C3 & C4 --> Inbox
+    Inbox --> Rules
+    Rules --> Router
+    Router --> Agent
+
+    %% Collaboration & Resolution
+    Agent <--> Collab
+    Agent --> Integrations
+    Agent -->|Response| Inbox
+    Inbox -->|Delivery| C1 & C2 & C3 & C4
+```
+
+### The Gateway Functions:
+
+1. **Aggregation (The Funnel):**
+   - It abstracts the complexity of different communication protocols. Whether a customer uses a proprietary API (WhatsApp) or a legacy one (Email), the technical supporter sees a unified interface.
+
+2. **Contextualization:**
+   - As a gateway, it doesn't just pass messages; it attaches context. It identifies the customer, shows their previous technical issues, and pulls metadata (like browser version or account tier) to help the supporter.
+
+3. **Routing & Triage:**
+   - Technical queries can be automatically routed to specific "Teams" (e.g., L2 Support, DevOps, Billing) based on keywords, the source inbox, or previous interaction history.
+
+4. **Internal-External Separation:**
+   - It provides a "safe space" for technical supporters to collaborate. Using **Private Notes**, a supporter can discuss a bug with a developer inside the conversation without the customer seeing the internal technical jargon or debugging steps.
+
+5. **External Tooling Bridge:**
+   - It acts as a gateway to other technical tools. A supporter can trigger a webhook to a bug tracker (Jira/GitHub) directly from the conversation, linking the customer's report to the technical task.

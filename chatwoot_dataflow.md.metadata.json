@@ -1,0 +1,5 @@
+{
+  "artifactType":  "ARTIFACT_TYPE_OTHER",
+  "summary":  "A detailed dataflow and architecture diagram for Chatwoot, explaining the interactions between Rails, Vue, Postgres, Redis, and Sidekiq.",
+  "updatedAt":  "2026-04-23T13:53:23.907392700Z"
+}
